@@ -54,14 +54,14 @@ actor _Updater
     for dep in bundle.deps.values() do
       if not ctx.nothing then
         if not deps_seen.contains(dep.locator) then
-          ctx.uout.info("update: will load dep: " + dep.name() + " @ " + dep.version())
+          ctx.uout.info("update: will load dep: " + dep.display_string())
           deps_seen(dep.locator) = dep
           deps_to_load(dep.locator) = dep
         else
-          ctx.uout.info("update: skipping seen dep: " + dep.name() + " @ " + dep.version())
+          ctx.uout.info("update: skipping seen dep: " + dep.display_string())
         end
       else
-        ctx.uout.info("update: would have loaded dep: " + dep.name() + " @ " + dep.version())
+        ctx.uout.info("update: would have loaded dep: " + dep.display_string())
       end
     end
     load_queued_deps()

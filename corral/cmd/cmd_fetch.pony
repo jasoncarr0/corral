@@ -50,12 +50,12 @@ actor _Fetcher
         if not fetched.contains(dep.locator) then
           fetched.set(dep.locator)
           fetch_dep(dep)
-          ctx.uout.info("fetch: fetching dep: " + dep.name() + " @ " + dep.version())
+          ctx.uout.info("fetch: fetching dep: " + dep.display_string())
         else
-          ctx.uout.info("fetch: skipping seen dep: " + dep.name() + " @ " + dep.version())
+          ctx.uout.info("fetch: skipping seen dep: " + dep.display_string())
         end
       else
-        ctx.uout.info("fetch: would have fetched dep: " + dep.name() + " @ " + dep.version())
+        ctx.uout.info("fetch: would have fetched dep: " + dep.display_string())
       end
     end
 
@@ -79,7 +79,7 @@ actor _Fetcher
 
       fetch_op(repo)
     else
-      ctx.uout.err("Error fetching dep: " + dep.name() + " @ " + dep.version())
+      ctx.uout.err("Error fetching dep: " + dep.display_string())
     end
 
   be fetch_transitive_dep(locator: Locator) =>

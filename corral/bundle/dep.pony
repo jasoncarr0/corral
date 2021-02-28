@@ -32,4 +32,5 @@ class Dep
 
   fun vcs(): String => locator.vcs_suffix.trim(1)
 
+  fun display_string(): String => name() + " @ " + version()
 
