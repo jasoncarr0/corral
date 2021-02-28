@@ -90,10 +90,16 @@ actor _Updater
 
     ctx.log.info("Loading dep: " + locator.path())
 
-    let revision = Constraints.best_revision(
-      base_bundle.dep_revision(dep.locator.string()),
-      dep.revision(),
-      dep.version())
+    let revision =
+      try
+        Constraints.best_revision(
+          base_bundle.dep_revision(dep.locator.string()),
+              dep.revision(),
+              dep.version())?
+      else
+        ctx.uout.err("update: Couldn't determine which revision to fetch: " + dep.display_string())
+        return
+      end
 
     let checkout_op = vcs.checkout_op(revision, {
         (repo: Repo) =>
@@ -169,10 +175,16 @@ actor _Updater
 
     let revision =
       match Constraints.resolve_version(dep.data.version, tags, ctx.log)
-      | "" => Constraints.best_revision(
-        base_bundle.dep_revision(dep.locator.string()),
-        dep.revision(),
-        dep.version())
+      | "" =>
+        try
+          Constraints.best_revision(
+            base_bundle.dep_revision(dep.locator.string()),
+                dep.revision(),
+                dep.version())?
+        else
+          ctx.uout.err("update: Couldn't determine which revision to fetch: " + dep.display_string())
+          return
+        end
       | let rev: String => rev
       end
     base_bundle.lock_revision(dep.locator.string(), revision)

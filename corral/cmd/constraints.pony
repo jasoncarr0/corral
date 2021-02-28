@@ -47,7 +47,7 @@ primitive Constraints
     end
 
 
-  fun best_revision(lrevision: String, drevision: String, version: String): String
+  fun best_revision(lrevision: String, drevision: String, version: String): String?
   =>
     """
     Returns the best choice of possible: a lock revision, a fallback dep revision, and a version.
@@ -60,14 +60,12 @@ primitive Constraints
     else
       try
         Constraints._parse_constraints(version)?
-        "main" // Is a constraint: use main until update.
       else
         if version != "" then
-          version  // Version is not a constraint, use that.
-        else
-          "main"  // Get the latest main if no constraints at all.
+          return version  // Version is not a constraint, use that.
         end
       end
+      error
     end
 
   fun _parse_constraints(constraint_str: String box): Array[ss.Constraint] ? =>

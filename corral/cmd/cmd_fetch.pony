@@ -60,19 +60,25 @@ actor _Fetcher
     end
 
   fun fetch_dep(dep: Dep val) =>
+    let revision =
+      try
+        Constraints.best_revision(
+          base_bundle.dep_revision(dep.locator.string()),
+              dep.revision(),
+              dep.version())?
+      else
+        ctx.uout.err("Couldn't determine which revision to fetch: " + dep.display_string())
+        return
+      end
     try
       let vcs = _vcs_builder(dep.vcs())?
       let repo = RepoForDep(ctx, project, dep)?
 
-      let revision = Constraints.best_revision(
-        base_bundle.dep_revision(dep.locator.string()),
-        dep.revision(),
-        dep.version())
 
       let self: _Fetcher tag = this
       let checkout_op = vcs.checkout_op(revision, {
-          (repo: Repo) => 
-            self.fetch_transitive_dep(dep.locator) 
+          (repo: Repo) =>
+            self.fetch_transitive_dep(dep.locator)
             PostFetchScript(ctx, repo)
         } val)
       let fetch_op = vcs.sync_op(checkout_op)
